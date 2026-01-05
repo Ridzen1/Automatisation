@@ -7,4 +7,4 @@ guide lancement de l'api php Immo
     - `docker compose run --rm php composer install `
 - Build et lancer le docker via:
     -`docker compose up -d`
-accéder au projet via `http://localhost:8080/`
+- accéder au projet via `http://localhost:8080/`
