@@ -1,8 +1,10 @@
-# Slim 4 API
+# Immo php api
+guide lancement de l'api php Immo
 
-Simple API using Slim v4 MySQL
-
-## Run
-
-- Create `.env` from `.env.exemple`
-- Update environement variable
+# guide de lancement
+- Crée le fichier `.env` en se basant sur `.env.exemple` et remplir les variables.
+- installer les dépendances via:
+    - `docker compose run --rm php composer install `
+- Build et lancer le docker via:
+    -`docker compose up -d`
+- accéder au projet via `http://localhost:8080/`
