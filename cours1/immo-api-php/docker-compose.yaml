@@ -1,0 +1,29 @@
+version: "3.8"
+services:
+  php:
+    build:
+      context: ./docker/php
+    volumes:
+      - ./:/var/www/html
+  server:
+    image: nginx:alpine
+    restart: always
+    ports:
+      - "${SERVER_PORT:-8080}:80"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+
+  mysql:
+#    user: "${UID}:${GID}" # Uncomment if you need to set user to match host user
+    image: mysql
+    restart: always
+    ports:
+      - "${MYSQL_PORT}:3306"
+    volumes:
+      - ./docker/db_data:/var/lib/mysql
+    environment:
+      MYSQL_USER: "${MYSQL_USER}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_PASSWORD}"
