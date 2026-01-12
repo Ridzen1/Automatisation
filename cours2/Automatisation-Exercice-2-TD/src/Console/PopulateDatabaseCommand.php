@@ -2,18 +2,19 @@
 
 namespace App\Console;
 
-use App\Models\Company;
-use App\Models\Employee;
-use App\Models\Office;
-use Illuminate\Support\Facades\Schema;
 use Slim\App;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Faker\Factory;
+use Faker\Generator;
+use Illuminate\Database\Capsule\Manager as DBManager;
 
 class PopulateDatabaseCommand extends Command
 {
     private App $app;
+    private Generator $faker;
+    private DBManager $db;
 
     public function __construct(App $app)
     {
@@ -27,47 +28,91 @@ class PopulateDatabaseCommand extends Command
         $this->setDescription('Populate database');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output ): int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('Populate database...');
 
-        /** @var \Illuminate\Database\Capsule\Manager $db */
-        $db = $this->app->getContainer()->get('db');
+        $this->db = $this->app->getContainer()->get('db');
+        $this->faker = Factory::create('fr_FR');
 
-        $db->getConnection()->statement("SET FOREIGN_KEY_CHECKS=0");
-        $db->getConnection()->statement("TRUNCATE `employees`");
-        $db->getConnection()->statement("TRUNCATE `offices`");
-        $db->getConnection()->statement("TRUNCATE `companies`");
-        $db->getConnection()->statement("SET FOREIGN_KEY_CHECKS=1");
+        $this->db->getConnection()->statement("SET FOREIGN_KEY_CHECKS=0");
+        $this->db->getConnection()->statement("TRUNCATE `employees`");
+        $this->db->getConnection()->statement("TRUNCATE `offices`");
+        $this->db->getConnection()->statement("TRUNCATE `companies`");
+        $this->db->getConnection()->statement("SET FOREIGN_KEY_CHECKS=1");
 
+        $this->insertCompany(1);
+        $this->insertCompany(2);
 
-        $db->getConnection()->statement("INSERT INTO `companies` VALUES
-    (1,'Stack Exchange','0601010101','stack@exchange.com','https://stackexchange.com/','https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Verisure_information_technology_department_at_Ch%C3%A2tenay-Malabry_-_2019-01-10.jpg/1920px-Verisure_information_technology_department_at_Ch%C3%A2tenay-Malabry_-_2019-01-10.jpg', now(), now(), null),
-    (2,'Google','0602020202','contact@google.com','https://www.google.com','https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Google_office_%284135991953%29.jpg/800px-Google_office_%284135991953%29.jpg?20190722090506',now(), now(), null)
-        ");
+        $this->insertOffice(1, 1);
+        $this->insertOffice(2, 1);
+        $this->insertOffice(3, 2);
+        $this->insertOffice(4, 2);
 
-        $db->getConnection()->statement("INSERT INTO `offices` VALUES
-    (1,'Bureau de Nancy','1 rue Stanistlas','Nancy','54000','France','nancy@stackexchange.com',NULL,1, now(), now()),
-    (2,'Burea de Vandoeuvre','46 avenue Jeanne d\'Arc','Vandoeuvre','54500','France',NULL,NULL,1, now(), now()),
-    (3,'Siege sociale','2 rue de la primatiale','Paris','75000','France',NULL,NULL,2, now(), now()),
-    (4,'Bureau Berlinois','192 avenue central','Berlin','12277','Allemagne',NULL,NULL,2, now(), now())
-        ");
+        $this->insertEmployee(1, 1);
+        $this->insertEmployee(2, 2);
+        $this->insertEmployee(3, 3);
+        $this->insertEmployee(4, 4);
+        $this->insertEmployee(5, 1);
+        $this->insertEmployee(6, 2);
+        $this->insertEmployee(7, 3);
+        $this->insertEmployee(8, 4);
 
-        $db->getConnection()->statement("INSERT INTO `employees` VALUES
-     (1,'Camille','La Chenille',1,'camille.la@chenille.com',NULL,'Ingénieur', now(), now()),
-     (2,'Albert','Mudhat',2,'albert.mudhat@aqume.net',NULL,'Superviseur', now(), now()),
-     (3,'Sylvie','Tesse',3,'sylive.tesse@factice.local',NULL,'PDG', now(), now()),
-     (4,'John','Doe',4,'john.doe@generique.org',NULL,'Testeur', now(), now()),
-     (5,'Jean','Bon',1,'jean@test.com',NULL,'Developpeur', now(), now()),
-     (6,'Anais','Dufour',2,'anais@aqume.net',NULL,'DBA', now(), now()),
-     (7,'Sylvain','Poirson',3,'sylvain@factice.local',NULL,'Administrateur réseau', now(), now()),
-     (8,'Telma','Thiriet',4,'telma@generique.org',NULL,'Juriste', now(), now())
-        ");
-
-        $db->getConnection()->statement("update companies set head_office_id = 1 where id = 1;");
-        $db->getConnection()->statement("update companies set head_office_id = 3 where id = 2;");
+        $this->db->getConnection()->statement("update companies set head_office_id = 1 where id = 1;");
+        $this->db->getConnection()->statement("update companies set head_office_id = 3 where id = 2;");
 
         $output->writeln('Database created successfully!');
         return 0;
+    }
+
+    private function insertCompany(int $id): void
+    {
+        $sql = "INSERT INTO `companies` VALUES (" .
+            $id . ", " .
+            $this->q($this->faker->company) . ", " .
+            $this->q($this->faker->phoneNumber) . ", " .
+            $this->q($this->faker->companyEmail) . ", " .
+            $this->q($this->faker->url) . ", " .
+            $this->q($this->faker->imageUrl(640, 480, 'business')) . ", " .
+            "now(), now(), null)";
+
+        $this->db->getConnection()->statement($sql);
+    }
+
+    private function insertOffice(int $id, int $companyId): void
+    {
+        $sql = "INSERT INTO `offices` VALUES (" .
+            $id . ", " .
+            $this->q('Bureau de ' . $this->faker->city) . ", " .
+            $this->q($this->faker->streetAddress) . ", " .
+            $this->q($this->faker->city) . ", " .
+            $this->q($this->faker->postcode) . ", " .
+            $this->q($this->faker->country) . ", " .
+            $this->q($this->faker->email) . ", " .
+            $this->q($this->faker->phoneNumber) . ", " .
+            $companyId . ", " .
+            "now(), now())";
+
+        $this->db->getConnection()->statement($sql);
+    }
+
+    private function insertEmployee(int $id, int $officeId): void
+    {
+        $sql = "INSERT INTO `employees` VALUES (" .
+            $id . ", " .
+            $this->q($this->faker->firstName) . ", " .
+            $this->q($this->faker->lastName) . ", " .
+            $officeId . ", " .
+            $this->q($this->faker->email) . ", " .
+            $this->q($this->faker->phoneNumber) . ", " .
+            $this->q($this->faker->jobTitle) . ", " .
+            "now(), now())";
+
+        $this->db->getConnection()->statement($sql);
+    }
+
+    private function q($value): string
+    {
+        return $value === null ? 'NULL' : $this->db->getConnection()->getPdo()->quote($value);
     }
 }
