@@ -39,5 +39,15 @@ services:
         ports:
             - "${DB_PORT:-3306}:3306"
 
+    node:
+        image: node:22-alpine
+        command: sleep infinity
+        restart: always
+        ports:
+            - 3000:3000
+        volumes:
+            - .:/app
+        working_dir: /app
+
 volumes:
     db-data:
