@@ -41,6 +41,5 @@ if (officesList) {
 }
 }
 
-console.log(variableQuiNexistePas);
 
 document.addEventListener('DOMContentLoaded', init)
