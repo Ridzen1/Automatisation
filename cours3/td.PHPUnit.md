@@ -35,7 +35,7 @@ Une bonne organisation des tests est cruciale pour maintenir un code lisible et 
 - Répertoire des tests : placer dans un dossier dédié, par exemple `tests/`  
 - Namespace : respecter la structure du namespace de la classe testée (ex. si la classe est dans `App\`, les tests iront dans `tests\App\`)  
 - Nom des fichiers : suffixer par `Test` (ex. `CalculatriceTest.php`)  
-- Organisation des classes : logique, par exemple `CalculatriceTest` pour tester la classe `Calculatrice`  
+- Organisation des classes : logique, par exemple `CalculatriceTest` pour tester la classe `Calculatrice`
 - Nom des méthodes : clair et explicite, ex. `testDivision()`, `testDivisionParZero()`  
 
 Exemple d’arborescence :  
