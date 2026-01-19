@@ -1,8 +1,12 @@
-# TP Automatisation du developpement - Test - PHPUnit
+# TP Automatisation du developpement - Test - Rendu 3
 
-Exercice pour le cours d'automatisation du développement sur les tests.
+Mini projet pour le rendu numéro 3 du cours d'automatisation du développement sur les tests.
 
-Ce projet contient une classe `Calculator.php` qui permet de faire des opérations basique
+Ce projet contient seulement 3 classes qui intéragissent entre elle :
+
+- `Person` : Classe qui permet de créer une personne
+- `Wallet` : Classe qui permet de créer un portefeuille avec une devise spécifique
+- `Product` : Classe qui permet de créer un produit avec une catégorie et une liste de prix par devise.
 
 ## Technologie utilisées
 
@@ -52,12 +56,9 @@ docker compose run --rm php composer phpstan
 ## Structure du projet
 
 - **src** : Contient le code source de l'application
+  - **Entity** : Contient les classes entités du projet
 - **tests** : Contient le code source des tests
 - **coverage** : Dossier contentant les rapports de test coverage
-
-## Attendu
-
-Vous devrez écrire les tests pour couvrir toutes les fonctions de la classe Calculator.php et afficher un rapport de code coverage à 100%. Un exercice plus complet sera vu en TD.
 
 ### Tips
 
