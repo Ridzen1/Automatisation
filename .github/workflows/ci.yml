@@ -28,7 +28,7 @@ jobs:
     - name: Preparation BDD
       run: |
         mkdir -p var
-        php bin/console doctrine:database:create --env=test --if-not-exists
+        # On a supprimé 'doctrine:database:create' qui fait planter SQLite
         php bin/console doctrine:schema:create --env=test
 
     - name: Verification style (PHPCS)
