@@ -1,0 +1,53 @@
+name: Pipeline CI/CD Symfony
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-test-deploy:
+    name: Build, Test & Deploy
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: ./cours4/td_backend
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Mise en place de PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: ctype, iconv, sqlite3, intl
+          coverage: none
+
+      - name: Installation des dépendances
+        run: composer install --prefer-dist --no-progress
+
+      - name: Préparation Environnement & BDD
+        run: |
+          cp .env .env.local
+          mkdir -p var
+          # Création de la BDD SQLite de test
+          php bin/console doctrine:database:create --env=test --if-not-exists
+          php bin/console doctrine:schema:create --env=test
+
+      - name: Vérification du style (PHP-CS-Fixer)
+        run: vendor/bin/php-cs-fixer fix --dry-run --diff
+
+      - name: Analyse Statique (PHPStan)
+        run: vendor/bin/phpstan analyse src tests
+
+      - name: Exécution des Tests (PHPUnit)
+        run: vendor/bin/phpunit
+
+      - name: Déploiement Simulé (Prod)
+        if: success()
+        run: |
+          echo "Tous les tests sont valides."
+          echo "Déploiement simulé vers la production..."
