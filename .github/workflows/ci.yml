@@ -6,10 +6,21 @@ on:
 jobs:
   workflow:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./cours4/td_backend
+
     steps:
     - uses: shivammathur/setup-php@v2
       with:
         php-version: '8.3'
+        extensions: ctype, iconv, sqlite3
+
     - uses: actions/checkout@v4
-    - name: ECHO FOR TEST
-      run: echo "FICHIER DE CI / CD BIEN EXECUTE"
+
+    - name: Creation .env depuis .env.test
+      run: cp .env.test .env
+
+    - name: Installation dependances
+      run: composer install --prefer-dist --no-progress
