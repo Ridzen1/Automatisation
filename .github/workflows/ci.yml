@@ -25,17 +25,11 @@ jobs:
     - name: Installation dependances
       run: composer install --prefer-dist --no-progress
 
-    - name: Preparation BDD
-      run: |
-        mkdir -p var
-        # On a supprimé 'doctrine:database:create' qui fait planter SQLite
-        php bin/console doctrine:schema:create --env=test
-
     - name: Verification style (PHPCS)
-      run: vendor/bin/php-cs-fixer fix --dry-run --diff
+      run: composer run phpcs
 
     - name: Analyse statique (PHPStan)
-      run: vendor/bin/phpstan analyse src tests
+      run: composer run phpstan
 
     - name: Tests Unitaires (PHPUnit)
-      run: vendor/bin/phpunit
+      run: composer run test
