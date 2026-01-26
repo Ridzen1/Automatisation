@@ -35,7 +35,7 @@ Une bonne organisation des tests est cruciale pour maintenir un code lisible et 
 - Répertoire des tests : placer dans un dossier dédié, par exemple `tests/`  
 - Namespace : respecter la structure du namespace de la classe testée (ex. si la classe est dans `App\`, les tests iront dans `tests\App\`)  
 - Nom des fichiers : suffixer par `Test` (ex. `CalculatriceTest.php`)  
-- Organisation des classes : logique, par exemple `CalculatriceTest` pour tester la classe `Calculatrice`  
+- Organisation des classes : logique, par exemple `CalculatriceTest` pour tester la classe `Calculatrice`
 - Nom des méthodes : clair et explicite, ex. `testDivision()`, `testDivisionParZero()`  
 
 Exemple d’arborescence :  
@@ -121,3 +121,12 @@ Il faudra aussi définir la variable d’environnement :
 ```bash
 export XDEBUG_MODE=coverage
 ```
+
+### Tips
+
+Servez vous des rapports de code coverage pour vérifier la pertinence de vos tests.
+
+Si vous rencontrer l'erreur :
+> No code coverage driver available
+
+C'est que vous n'avez pas l'extention XDebug de configuré avec PHP. Pour l'ajouter suivez le [guide d'installation](https://xdebug.org/docs/install) pour votre OS.

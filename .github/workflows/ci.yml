@@ -1,0 +1,35 @@
+name: Pipeline CI/CD Symfony
+
+on:
+  push:
+
+jobs:
+  workflow:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./cours4/td_backend
+
+    steps:
+    - uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        extensions: ctype, iconv, sqlite3
+
+    - uses: actions/checkout@v4
+
+    - name: Creation .env depuis .env.test
+      run: cp .env.test .env
+
+    - name: Installation dependances
+      run: composer install --prefer-dist --no-progress
+
+    - name: Verification style (PHPCS)
+      run: composer run phpcs
+
+    - name: Analyse statique (PHPStan)
+      run: composer run phpstan
+
+    - name: Tests Unitaires (PHPUnit)
+      run: composer run test
