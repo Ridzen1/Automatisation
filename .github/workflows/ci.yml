@@ -2,7 +2,6 @@ name: Pipeline CI/CD Symfony
 
 on:
   push:
-    branches: [ "main" ]
 
 jobs:
   workflow:
