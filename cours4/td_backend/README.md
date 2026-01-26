@@ -13,12 +13,31 @@ docker compose up
 
 ## Initialisation de la base de données + Peuplement
 ```bash
-# Todo...
-````
+## Initialisation de la base de données + Peuplement
+Une fois le conteneur lancé, exécutez ces deux commandes pour créer les tables et générer les fausses données de test :
+
+```bash
+## 1. Création des Entités et de la Relation
+```bash
+# Création de l'entité Réalisateur (champs : nom, prenom)
+docker compose run --rm php bin/console make:entity Realisateur
+
+# Création de l'entité Film et liaison
+docker compose run --rm php bin/console make:entity Film
+# Note : La relation ManyToOne vers Realisateur a été ajoutée lors de cette étape (mettre relation comme type de champs)
+
+# 2. Création des tables (Migration)
+docker compose run --rm php bin/console doctrine:migrations:migrate
+
+# 3. Création de la fixture
+docker compose run --rm php bin/console make:fixture AppFixtures
+
+# 4. Remplissage de la base avec Faker (Fixtures)
+docker compose run --rm php bin/console doctrine:fixtures:lo
 
 ## Accès aux vues :
-// TODO ...
-
+Liste des Films : http://localhost:8080/film
+Liste des Réalisateurs : http://localhost:8080/realisateur
 ---
 
 
