@@ -24,8 +24,8 @@ class AppFixtures extends Fixture
             for ($j = 0; $j < mt_rand(2, 5); $j++) {
                 $film = new Film();
                 $film->setTitre($faker->sentence(3));
-                
-                $film->setDuree($faker->numberBetween(90, 180) . ' min'); 
+
+                $film->setDuree($faker->numberBetween(90, 180) . ' min');
 
                 $film->setRealisateur($realisateur);
 
