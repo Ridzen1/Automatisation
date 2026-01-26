@@ -24,3 +24,18 @@ jobs:
 
     - name: Installation dependances
       run: composer install --prefer-dist --no-progress
+
+    - name: Preparation BDD
+      run: |
+        mkdir -p var
+        php bin/console doctrine:database:create --env=test --if-not-exists
+        php bin/console doctrine:schema:create --env=test
+
+    - name: Verification style (PHPCS)
+      run: vendor/bin/php-cs-fixer fix --dry-run --diff
+
+    - name: Analyse statique (PHPStan)
+      run: vendor/bin/phpstan analyse src tests
+
+    - name: Tests Unitaires (PHPUnit)
+      run: vendor/bin/phpunit
