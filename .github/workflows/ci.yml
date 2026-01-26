@@ -2,15 +2,13 @@ name: Pipeline CI/CD Symfony
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
   pull_request:
-    branches: [ "main" ]
-
 jobs:
   build-test-deploy:
     name: Build, Test & Deploy
     runs-on: ubuntu-latest
-    
+
     defaults:
       run:
         working-directory: ./cours4/td_backend
