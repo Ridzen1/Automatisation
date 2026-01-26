@@ -2,8 +2,8 @@ name: Pipeline CI/CD Symfony
 
 on:
   push:
-    branches:
   pull_request:
+
 jobs:
   build-test-deploy:
     name: Build, Test & Deploy
@@ -14,9 +14,11 @@ jobs:
         working-directory: ./cours4/td_backend
 
     steps:
+      # 1. Récupération du code
       - name: Checkout du code
         uses: actions/checkout@v4
 
+      # 2. Installation de PHP
       - name: Mise en place de PHP 8.2
         uses: shivammathur/setup-php@v2
         with:
@@ -24,28 +26,38 @@ jobs:
           extensions: ctype, iconv, sqlite3, intl
           coverage: none
 
+      # 3. CRÉATION DU .ENV (DÉPLACÉ ICI : AVANT COMPOSER)
+      # On crée un .env minimal pour que Symfony puisse démarrer
+      - name: Création du fichier .env
+        run: |
+          echo "APP_ENV=test" > .env
+          echo "DATABASE_URL=sqlite:///%kernel.project_dir%/var/data.db" >> .env
+          mkdir -p var
+
+      # 4. Installation des dépendances
       - name: Installation des dépendances
         run: composer install --prefer-dist --no-progress
 
-      - name: Préparation Environnement & BDD
+      # 5. Base de données
+      - name: Préparation BDD
         run: |
-          cp .env .env.local
-          mkdir -p var
-          # Création de la BDD SQLite de test
           php bin/console doctrine:database:create --env=test --if-not-exists
           php bin/console doctrine:schema:create --env=test
 
+      # 6. Linters
       - name: Vérification du style (PHP-CS-Fixer)
         run: vendor/bin/php-cs-fixer fix --dry-run --diff
 
       - name: Analyse Statique (PHPStan)
         run: vendor/bin/phpstan analyse src tests
 
+      # 7. Tests
       - name: Exécution des Tests (PHPUnit)
         run: vendor/bin/phpunit
 
+      # 8. Déploiement
       - name: Déploiement Simulé (Prod)
         if: success()
         run: |
-          echo "Tous les tests sont valides."
-          echo "Déploiement simulé vers la production..."
+          echo "✅ Tous les tests sont valides."
+          echo "🚀 Déploiement simulé vers la production..."
