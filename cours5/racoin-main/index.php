@@ -55,7 +55,7 @@ $app->get('/item/{n}', function (Request $request, Response $response, array $ar
     return $response;
 });
 
-$app->get('/add/', function (Request $request, Response $response) use ($twig, $menu, $chemin, $cat, $dpt) {
+$app->get('/add', function (Request $request, Response $response) use ($twig, $menu, $chemin, $cat, $dpt) {
     ob_start();
     $ajout = new controller\addItem();
     $ajout->addItemView($twig, $menu, $chemin, $cat->getCategories(), $dpt->getAllDepartments());
@@ -63,7 +63,7 @@ $app->get('/add/', function (Request $request, Response $response) use ($twig, $
     return $response;
 });
 
-$app->post('/add/', function (Request $request, Response $response) use ($twig, $menu, $chemin) {
+$app->post('/add', function (Request $request, Response $response) use ($twig, $menu, $chemin) {
     ob_start();
     $allPostVars = (array)$request->getParsedBody();
     $ajout = new controller\addItem();
@@ -98,7 +98,7 @@ $app->map(['GET', 'POST'], '/item/{id}/confirm', function (Request $request, Res
     return $response;
 });
 
-$app->get('/search/', function (Request $request, Response $response) use ($twig, $menu, $chemin, $cat) {
+$app->get('/search', function (Request $request, Response $response) use ($twig, $menu, $chemin, $cat) {
     ob_start();
     $s = new controller\Search();
     $s->show($twig, $menu, $chemin, $cat->getCategories());
@@ -106,7 +106,7 @@ $app->get('/search/', function (Request $request, Response $response) use ($twig
     return $response;
 });
 
-$app->post('/search/', function (Request $request, Response $response) use ($twig, $menu, $chemin, $cat) {
+$app->post('/search', function (Request $request, Response $response) use ($twig, $menu, $chemin, $cat) {
     ob_start();
     $array = (array)$request->getParsedBody();
     $s = new controller\Search();

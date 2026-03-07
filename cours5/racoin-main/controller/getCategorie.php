@@ -9,6 +9,7 @@ use model\Annonceur;
 
 class getCategorie {
 
+    protected $annonce;
     protected $categories = array();
 
     public function getCategories() {

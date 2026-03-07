@@ -8,6 +8,12 @@ use model\Photo;
 use model\Categorie;
 
 class item {
+    protected $annonce;
+    protected $annonceur;
+    protected $departement;
+    protected $photo;
+    protected $categItem;
+    protected $dptItem;
     public function __construct(){
     }
     function afficherItem($twig, $menu, $chemin, $n, $cat) {
@@ -192,15 +198,15 @@ class item {
             $this->annonceur = Annonceur::find($idannonceur);
 
 
-            $this->annonceur->email = htmlentities($allPostVars['email']);
-            $this->annonceur->nom_annonceur = htmlentities($allPostVars['nom']);
-            $this->annonceur->telephone = htmlentities($allPostVars['phone']);
-            $this->annonce->ville = htmlentities($allPostVars['ville']);
+            $this->annonceur->email = $allPostVars['email'];
+            $this->annonceur->nom_annonceur = $allPostVars['nom'];
+            $this->annonceur->telephone = $allPostVars['phone'];
+            $this->annonce->ville = $allPostVars['ville'];
             $this->annonce->id_departement = $allPostVars['departement'];
-            $this->annonce->prix = htmlentities($allPostVars['price']);
+            $this->annonce->prix = $allPostVars['price'];
             $this->annonce->mdp = password_hash ($allPostVars['psw'], PASSWORD_DEFAULT);
-            $this->annonce->titre = htmlentities($allPostVars['title']);
-            $this->annonce->description = htmlentities($allPostVars['description']);
+            $this->annonce->titre = $allPostVars['title'];
+            $this->annonce->description = $allPostVars['description'];
             $this->annonce->id_categorie = $allPostVars['categorie'];
             $this->annonce->date = date('Y-m-d');
             $this->annonceur->save();
