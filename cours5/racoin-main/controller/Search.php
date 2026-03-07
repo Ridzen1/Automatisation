@@ -8,7 +8,7 @@ use model\Categorie;
 class Search {
 
     function show($twig, $menu, $chemin, $cat) {
-        $template = $twig->loadTemplate("search.html.twig");
+        $template = $twig->load("search.html.twig");
         $menu = array(
             array('href' => $chemin,
                 'text' => 'Acceuil'),
@@ -19,7 +19,7 @@ class Search {
     }
 
     function research($array, $twig, $menu, $chemin, $cat) {
-        $template = $twig->loadTemplate("index.html.twig");
+        $template = $twig->load("index.html.twig");
         $menu = array(
             array('href' => $chemin,
                 'text' => 'Acceuil'),

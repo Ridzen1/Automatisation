@@ -7,7 +7,7 @@ use model\ApiKey;
 class KeyGenerator {
 
     function show($twig, $menu, $chemin, $cat) {
-        $template = $twig->loadTemplate("key-generator.html.twig");
+        $template = $twig->load("key-generator.html.twig");
         $menu = array(
             array('href' => $chemin,
                 'text' => 'Acceuil'),
@@ -21,7 +21,7 @@ class KeyGenerator {
         $nospace_nom = str_replace(' ', '', $nom);
 
         if($nospace_nom === '') {
-            $template = $twig->loadTemplate("key-generator-error.html.twig");
+            $template = $twig->load("key-generator-error.html.twig");
             $menu = array(
                 array('href' => $chemin,
                     'text' => 'Acceuil'),
@@ -31,7 +31,7 @@ class KeyGenerator {
 
             echo $template->render(array("breadcrumb" => $menu, "chemin" => $chemin, "categories" => $cat));
         } else {
-            $template = $twig->loadTemplate("key-generator-result.html.twig");
+            $template = $twig->load("key-generator-result.html.twig");
             $menu = array(
                 array('href' => $chemin,
                     'text' => 'Acceuil'),

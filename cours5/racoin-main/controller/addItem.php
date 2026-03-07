@@ -9,7 +9,7 @@ class addItem{
 
     function addItemView($twig, $menu, $chemin, $cat, $dpt){
 
-        $template = $twig->loadTemplate("add.html.twig");
+        $template = $twig->load("add.html.twig");
         echo $template->render(array(
                                     "breadcrumb" => $menu,
                                     "chemin" => $chemin,
@@ -146,7 +146,7 @@ class addItem{
         // S'il y a des erreurs on redirige vers la page d'erreur
         if (!empty($errors)) {
 
-            $template = $twig->loadTemplate("add-error.html.twig");
+            $template = $twig->load("add-error.html.twig");
             echo $template->render(array(
                                     "breadcrumb" => $menu,
                                     "chemin" => $chemin,
@@ -176,7 +176,7 @@ class addItem{
             $annonceur->annonce()->save($annonce);
 
 
-            $template = $twig->loadTemplate("add-confirm.html.twig");
+            $template = $twig->load("add-confirm.html.twig");
             echo $template->render(array("breadcrumb" => $menu, "chemin" => $chemin));
         }
     }
