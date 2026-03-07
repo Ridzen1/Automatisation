@@ -20,7 +20,7 @@ Cette application est une plateforme de petites annonces développée en PHP ave
    `docker-compose up -d`
 
 3. **Initialiser la base de données :**
-   Connectez-vous à la base de données via votre client SQL sur `localhost:3306` avec les identifiants suivants (visibles dans `config/config.ini`) :
+   Connectez-vous à l'adminer de la base de données sur `localhost:8081` avec les identifiants suivants (visibles dans `config/config.ini`) :
    - User : `racoin_user`
    - Password : `racoin_password`
    - Database : `racoin`

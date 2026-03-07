@@ -13,8 +13,5 @@ vendor/
 ### Linux ###
 *~
 
-### Database ###
-config/config.ini
-config/db.ini
 
 composer.lock
