@@ -1,0 +1,17 @@
+.idea/
+.idea_modules/
+
+### OSX ###
+.DS_Store
+.AppleDouble
+.LSOverride
+
+### Composer ###
+composer.phar
+vendor/
+
+### Linux ###
+*~
+
+
+composer.lock
