@@ -1,8 +1,6 @@
 <?php
 
-namespace App\Entity;
-
-class Bicycle {
+class Bicycle implements Vehicule{
     private $costPerKm;
     private $fuelType;
 
