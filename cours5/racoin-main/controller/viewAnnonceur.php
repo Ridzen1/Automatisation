@@ -7,9 +7,9 @@
  */
 
 namespace controller;
-use model\Annonce;
-use model\Annonceur;
-use model\Photo;
+use racoin\model\Annonce;
+use racoin\model\Annonceur;
+use racoin\model\Photo;
 
 class viewAnnonceur {
     protected $annonceur;

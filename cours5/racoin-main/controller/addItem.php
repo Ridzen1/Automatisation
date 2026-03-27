@@ -2,8 +2,8 @@
 
 namespace controller;
 
-use model\Annonce;
-use model\Annonceur;
+use racoin\model\Annonce;
+use racoin\model\Annonceur;
 
 class addItem
 {

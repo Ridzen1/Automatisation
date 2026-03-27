@@ -1,16 +1,16 @@
 <?php
 require 'vendor/autoload.php';
 
-use controller\getCategorie;
-use controller\getDepartment;
-use controller\index;
-use controller\item;
-use db\connection;
+use racoin\controller\getCategorie;
+use racoin\controller\getDepartment;
+use racoin\controller\index;
+use racoin\controller\item;
+use racoin\db\connection;
 
-use model\Annonce;
-use model\Categorie;
-use model\Annonceur;
-use model\Departement;
+use racoin\model\Annonce;
+use racoin\model\Categorie;
+use racoin\model\Annonceur;
+use racoin\model\Departement;
 use Slim\App;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -69,8 +69,8 @@ $menu = [
 
 $chemin = dirname($_SERVER['SCRIPT_NAME']);
 
-$cat = new getCategorie();
-$dpt = new getDepartment();
+$cat = new \racoin\controller\getCategorie();
+$dpt = new \racoin\controller\getDepartment();
 
 $app->get('/', function () use ($twig, $menu, $chemin, $cat) {
     $index = new index();
@@ -119,7 +119,7 @@ $app->map(['GET, POST'], '/item/{id}/confirm', function ($request, $response, $a
 });
 
 $app->get('/search', function () use ($twig, $menu, $chemin, $cat) {
-    $s = new controller\Search();
+    $s = new racoin\controller\Search();
     $s->show($twig, $menu, $chemin, $cat->getCategories());
 });
 

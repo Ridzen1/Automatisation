@@ -6,10 +6,10 @@ use Slim\Factory\AppFactory;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Routing\RouteCollectorProxy;
-use model\Annonce;
-use model\Categorie;
-use model\Annonceur;
-use model\Departement;
+use racoin\model\Annonce;
+use racoin\model\Categorie;
+use racoin\model\Annonceur;
+use racoin\model\Departement;
 
 connection::createConn();
 

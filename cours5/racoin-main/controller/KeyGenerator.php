@@ -2,7 +2,7 @@
 
 namespace controller;
 
-use model\ApiKey;
+use racoin\model\ApiKey;
 
 class KeyGenerator {
 

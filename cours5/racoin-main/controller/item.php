@@ -1,11 +1,11 @@
 <?php
 
 namespace controller;
-use model\Annonce;
-use model\Annonceur;
-use model\Departement;
-use model\Photo;
-use model\Categorie;
+use racoin\model\Annonce;
+use racoin\model\Annonceur;
+use racoin\model\Departement;
+use racoin\model\Photo;
+use racoin\model\Categorie;
 
 class item {
     protected $annonce;

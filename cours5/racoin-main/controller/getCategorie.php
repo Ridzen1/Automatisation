@@ -2,10 +2,10 @@
 
 namespace controller;
 
-use model\Categorie;
-use model\Annonce;
-use model\Photo;
-use model\Annonceur;
+use racoin\model\Categorie;
+use racoin\model\Annonce;
+use racoin\model\Photo;
+use racoin\model\Annonceur;
 
 class getCategorie {
 

@@ -2,7 +2,7 @@
 
 namespace controller;
 
-use model\Departement;
+use racoin\model\Departement;
 
 class getDepartment {
 

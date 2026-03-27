@@ -2,8 +2,8 @@
 
 namespace controller;
 
-use model\Annonce;
-use model\Categorie;
+use racoin\model\Annonce;
+use racoin\model\Categorie;
 
 class Search {
 

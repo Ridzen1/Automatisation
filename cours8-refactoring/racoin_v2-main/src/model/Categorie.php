@@ -1,6 +1,6 @@
 <?php
 
-namespace model;
+namespace racoin\model;
 
 class Categorie extends \Illuminate\Database\Eloquent\Model {
     protected $table = 'categorie';

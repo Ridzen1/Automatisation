@@ -1,8 +1,8 @@
 <?php
 
-namespace controller;
+namespace racoin\controller;
 
-use model\Departement;
+use racoin\model\Departement;
 
 class getDepartment {
 

@@ -2,9 +2,9 @@
 
 namespace controller;
 
-use model\Annonce;
-use model\Photo;
-use model\Annonceur;
+use racoin\model\Annonce;
+use racoin\model\Photo;
+use racoin\model\Annonceur;
 
 class index {
     protected $annonce = array();

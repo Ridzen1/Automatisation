@@ -1,6 +1,6 @@
 <?php
 
-namespace model;
+namespace racoin\model;
 
 class Annonce extends \Illuminate\Database\Eloquent\Model {
     protected $table = 'annonce';
@@ -11,12 +11,12 @@ class Annonce extends \Illuminate\Database\Eloquent\Model {
 
     public function annonceur()
     {
-        return $this->belongsTo('model\Annonceur', 'id_annonceur');
+        return $this->belongsTo('racoin\model\Annonceur', 'id_annonceur');
     }
 
     public function photo()
     {
-        return $this->hasMany('model\Photo', 'id_photo');
+        return $this->hasMany('racoin\model\Photo', 'id_photo');
     }
 
 }

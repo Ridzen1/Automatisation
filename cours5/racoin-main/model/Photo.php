@@ -9,7 +9,7 @@ class Photo extends \Illuminate\Database\Eloquent\Model {
 
     public function annonce()
     {
-        return $this->belongsTo('model\Annonce', 'id_annonce');
+        return $this->belongsTo('racoin\model\Annonce', 'id_annonce');
     }
 }
 
