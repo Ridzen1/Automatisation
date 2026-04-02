@@ -2,260 +2,221 @@
 
 declare(strict_types=1);
 
+// Attention à bien mettre la majuscule si tu as mis Racoin\Controller pour AddItem !
 namespace Racoin\Controller;
 
-use racoin\Model\Annonce;
-use racoin\Model\Annonceur;
-use racoin\Model\Departement;
-use racoin\Model\Photo;
-use racoin\Model\Categorie;
+use Racoin\Model\Annonce;
+use Racoin\Model\Annonceur;
+use Racoin\Model\Departement;
+use Racoin\Model\Photo;
+use Racoin\Model\Categorie;
 use Twig\Environment;
 
 class Item
 {
-    private ?Annonce $annonce = null;
-    private ?Annonceur $annonceur = null;
+    // Plus besoin de __construct ni de #[AllowDynamicProperties]
 
-    public function afficherItem(
-        Environment $twig,
-        array $menu,
-        string $chemin,
-        int $n,
-        array $cat
-    ): void {
-        $this->annonce = Annonce::find($n);
+    public function afficherItem(Environment $twig, array $menu, string $chemin, string|int $n, array $cat): void
+    {
+        $annonce = Annonce::find($n);
 
-        if (!$this->annonce) {
-            echo '404';
+        if (!$annonce) {
+            echo "404";
             return;
         }
+
+        $categorie = Categorie::find($annonce->id_categorie);
 
         $menu = [
-            [
-                'href' => $chemin,
-                'text' => 'Acceuil',
-            ],
-            [
-                'href' => $chemin . '/cat/' . $n,
-                'text' => Categorie::find($this->annonce->id_categorie)?->nom_categorie,
-            ],
-            [
-                'href' => $chemin . '/item/' . $n,
-                'text' => $this->annonce->titre,
-            ],
+            ['href' => $chemin, 'text' => 'Accueil'],
+            ['href' => $chemin . "/cat/" . $n, 'text' => $categorie?->nom_categorie],
+            ['href' => $chemin . "/item/" . $n, 'text' => $annonce->titre]
         ];
 
-        $this->annonceur = Annonceur::find($this->annonce->id_annonceur);
-        $departement = Departement::find($this->annonce->id_departement);
-        $photos = Photo::where('id_annonce', '=', $n)->get();
+        // Au lieu d'utiliser $this->..., on utilise de simples variables locales
+        $annonceur = Annonceur::find($annonce->id_annonceur);
+        $departement = Departement::find($annonce->id_departement);
+        $photo = Photo::where('id_annonce', '=', $n)->get();
 
-        echo $twig->load('item.html.twig')->render([
-            'breadcrumb' => $menu,
-            'chemin'     => $chemin,
-            'annonce'    => $this->annonce,
-            'annonceur'  => $this->annonceur,
-            'dep'        => $departement?->nom_departement,
-            'photo'      => $photos,
-            'categories' => $cat,
+        $template = $twig->load("item.html.twig");
+
+        echo $template->render([
+            "breadcrumb" => $menu,
+            "chemin" => $chemin,
+            "annonce" => $annonce,
+            "annonceur" => $annonceur,
+            "dep" => $departement?->nom_departement,
+            "photo" => $photo,
+            "categories" => $cat
         ]);
     }
 
-    public function supprimerItemGet(
-        Environment $twig,
-        array $menu,
-        string $chemin,
-        int $n
-    ): void {
-        $this->annonce = Annonce::find($n);
+    public function supprimerItemGet(Environment $twig, array $menu, string $chemin, string|int $n): void
+    {
+        $annonce = Annonce::find($n);
 
-        if (!$this->annonce) {
-            echo '404';
+        if (!$annonce) {
+            echo "404";
             return;
         }
 
-        echo $twig->load('delGet.html.twig')->render([
-            'breadcrumb' => $menu,
-            'chemin'     => $chemin,
-            'annonce'    => $this->annonce,
+        $template = $twig->load("delGet.html.twig");
+
+        echo $template->render([
+            "breadcrumb" => $menu,
+            "chemin" => $chemin,
+            "annonce" => $annonce
         ]);
     }
 
-    public function supprimerItemPost(
-        Environment $twig,
-        array $menu,
-        string $chemin,
-        int $n,
-        array $cat
-    ): void {
-        $this->annonce = Annonce::find($n);
-
-        if (!$this->annonce) {
-            echo '404';
-            return;
-        }
-
+    // On ajoute $allPostVars pour éviter d'utiliser $_POST
+    public function supprimerItemPost(Environment $twig, array $menu, string $chemin, string|int $n, array $cat, array $allPostVars): void
+    {
+        $annonce = Annonce::find($n);
         $reponse = false;
 
-        if (isset($_POST['pass']) && password_verify($_POST['pass'], $this->annonce->mdp)) {
+        $pass = $allPostVars["pass"] ?? '';
+
+        if ($annonce && password_verify($pass, $annonce->mdp)) {
             $reponse = true;
-
             Photo::where('id_annonce', '=', $n)->delete();
-            $this->annonce->delete();
+            $annonce->delete();
         }
 
-        echo $twig->load('delPost.html.twig')->render([
-            'breadcrumb' => $menu,
-            'chemin'     => $chemin,
-            'annonce'    => $this->annonce,
-            'pass'       => $reponse,
-            'categories' => $cat,
+        $template = $twig->load("delPost.html.twig");
+        echo $template->render([
+            "breadcrumb" => $menu,
+            "chemin" => $chemin,
+            "annonce" => $annonce,
+            "pass" => $reponse,
+            "categories" => $cat
         ]);
     }
 
-    public function modifyGet(
-        Environment $twig,
-        array $menu,
-        string $chemin,
-        int $id
-    ): void {
-        $this->annonce = Annonce::find($id);
+    public function modifyGet(Environment $twig, array $menu, string $chemin, string|int $id): void
+    {
+        $annonce = Annonce::find($id);
 
-        if (!$this->annonce) {
-            echo '404';
+        if (!$annonce) {
+            echo "404";
             return;
         }
 
-        echo $twig->load('modifyGet.html.twig')->render([
-            'breadcrumb' => $menu,
-            'chemin'     => $chemin,
-            'annonce'    => $this->annonce,
+        $template = $twig->load("modifyGet.html.twig");
+
+        echo $template->render([
+            "breadcrumb" => $menu,
+            "chemin" => $chemin,
+            "annonce" => $annonce
         ]);
     }
 
-    public function modifyPost(
-        Environment $twig,
-        array $menu,
-        string $chemin,
-        int $n,
-        array $cat,
-        array $dpt
-    ): void {
-        $this->annonce = Annonce::find($n);
+    // On ajoute $allPostVars ici aussi
+    public function modifyPost(Environment $twig, array $menu, string $chemin, string|int $n, array $cat, array $dpt, array $allPostVars): void
+    {
+        $annonce = Annonce::find($n);
 
-        if (!$this->annonce) {
-            echo '404';
+        if (!$annonce) {
+            echo "404";
             return;
         }
 
-        $this->annonceur = Annonceur::find($this->annonce->id_annonceur);
+        $annonceur = Annonceur::find($annonce->id_annonceur);
+        $categItem = Categorie::find($annonce->id_categorie)?->nom_categorie;
+        $dptItem = Departement::find($annonce->id_departement)?->nom_departement;
 
-        $categItem = Categorie::find($this->annonce->id_categorie)?->nom_categorie;
-        $dptItem   = Departement::find($this->annonce->id_departement)?->nom_departement;
+        $reponse = false;
+        $pass = $allPostVars["pass"] ?? '';
 
-        $reponse = isset($_POST['pass']) && password_verify($_POST['pass'], $this->annonce->mdp);
+        if (password_verify($pass, $annonce->mdp)) {
+            $reponse = true;
+        }
 
-        echo $twig->load('modifyPost.html.twig')->render([
-            'breadcrumb'   => $menu,
-            'chemin'       => $chemin,
-            'annonce'      => $this->annonce,
-            'annonceur'    => $this->annonceur,
-            'pass'         => $reponse,
-            'categories'   => $cat,
-            'departements' => $dpt,
-            'dptItem'      => $dptItem,
-            'categItem'    => $categItem,
+        $template = $twig->load("modifyPost.html.twig");
+        echo $template->render([
+            "breadcrumb" => $menu,
+            "chemin" => $chemin,
+            "annonce" => $annonce,
+            "annonceur" => $annonceur,
+            "pass" => $reponse,
+            "categories" => $cat,
+            "departements" => $dpt,
+            "dptItem" => $dptItem,
+            "categItem" => $categItem
         ]);
     }
 
-    public function edit(
-        Environment $twig,
-        array $menu,
-        string $chemin,
-        array $allPostVars,
-        int $id
-    ): void {
+    public function edit(Environment $twig, array $menu, string $chemin, array $allPostVars, string|int $id): void
+    {
         date_default_timezone_set('Europe/Paris');
 
-        // validation simple PHP 8 (remplace la fonction interne inutile)
-        $isEmail = static fn(string $email): bool =>
-            (bool) filter_var($email, FILTER_VALIDATE_EMAIL);
-
-        $nom         = trim($_POST['nom'] ?? '');
-        $email       = trim($_POST['email'] ?? '');
-        $phone       = trim($_POST['phone'] ?? '');
-        $ville       = trim($_POST['ville'] ?? '');
-        $departement = trim($_POST['departement'] ?? '');
-        $categorie   = trim($_POST['categorie'] ?? '');
-        $title       = trim($_POST['title'] ?? '');
-        $description = trim($_POST['description'] ?? '');
-        $price       = trim($_POST['price'] ?? '');
+        $nom = trim($allPostVars['nom'] ?? '');
+        $email = trim($allPostVars['email'] ?? '');
+        $phone = trim($allPostVars['phone'] ?? '');
+        $ville = trim($allPostVars['ville'] ?? '');
+        $departement = trim($allPostVars['departement'] ?? '');
+        $categorie = trim($allPostVars['categorie'] ?? '');
+        $title = trim($allPostVars['title'] ?? '');
+        $description = trim($allPostVars['description'] ?? '');
+        $price = trim($allPostVars['price'] ?? '');
+        $password = trim($allPostVars['psw'] ?? '');
 
         $errors = [];
 
-        if ($nom === '') {
+        if ($nom === '')
             $errors[] = 'Veuillez entrer votre nom';
-        }
-        if (!$isEmail($email)) {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL))
             $errors[] = 'Veuillez entrer une adresse mail correcte';
-        }
-        if ($phone === '' || !is_numeric($phone)) {
+        if ($phone === '' || !is_numeric($phone))
             $errors[] = 'Veuillez entrer votre numéro de téléphone';
-        }
-        if ($ville === '') {
+        if ($ville === '')
             $errors[] = 'Veuillez entrer votre ville';
-        }
-        if (!is_numeric($departement)) {
+        if (!is_numeric($departement))
             $errors[] = 'Veuillez choisir un département';
-        }
-        if (!is_numeric($categorie)) {
+        if (!is_numeric($categorie))
             $errors[] = 'Veuillez choisir une catégorie';
-        }
-        if ($title === '') {
+        if ($title === '')
             $errors[] = 'Veuillez entrer un titre';
-        }
-        if ($description === '') {
+        if ($description === '')
             $errors[] = 'Veuillez entrer une description';
-        }
-        if ($price === '' || !is_numeric($price)) {
+        if ($price === '' || !is_numeric($price))
             $errors[] = 'Veuillez entrer un prix';
-        }
 
-        if ($errors !== []) {
-            echo $twig->load('add-error.html.twig')->render([
-                'breadcrumb' => $menu,
-                'chemin'     => $chemin,
-                'errors'     => $errors,
+        if (!empty($errors)) {
+            $template = $twig->load("add-error.html.twig");
+            echo $template->render([
+                "breadcrumb" => $menu,
+                "chemin" => $chemin,
+                "errors" => $errors
             ]);
             return;
         }
 
-        $this->annonce = Annonce::find($id);
-        if (!$this->annonce) {
-            echo '404';
-            return;
+        $annonce = Annonce::find($id);
+
+        if ($annonce) {
+            $annonceur = Annonceur::find($annonce->id_annonceur);
+
+            if ($annonceur) {
+                $annonceur->email = htmlspecialchars($email);
+                $annonceur->nom_annonceur = htmlspecialchars($nom);
+                $annonceur->telephone = htmlspecialchars($phone);
+                $annonceur->save();
+            }
+
+            $annonce->ville = htmlspecialchars($ville);
+            $annonce->id_departement = $departement;
+            $annonce->prix = htmlspecialchars($price);
+            $annonce->mdp = password_hash($password, PASSWORD_DEFAULT);
+            $annonce->titre = htmlspecialchars($title);
+            $annonce->description = htmlspecialchars($description);
+            $annonce->id_categorie = $categorie;
+            $annonce->date = date('Y-m-d');
+
+            $annonce->save();
         }
 
-        $this->annonceur = Annonceur::find($this->annonce->id_annonceur);
-
-        $this->annonceur->email         = htmlentities($allPostVars['email']);
-        $this->annonceur->nom_annonceur = htmlentities($allPostVars['nom']);
-        $this->annonceur->telephone     = htmlentities($allPostVars['phone']);
-
-        $this->annonce->ville          = htmlentities($allPostVars['ville']);
-        $this->annonce->id_departement = $allPostVars['departement'];
-        $this->annonce->prix           = htmlentities($allPostVars['price']);
-        $this->annonce->mdp            = password_hash($allPostVars['psw'], PASSWORD_DEFAULT);
-        $this->annonce->titre          = htmlentities($allPostVars['title']);
-        $this->annonce->description    = htmlentities($allPostVars['description']);
-        $this->annonce->id_categorie   = $allPostVars['categorie'];
-        $this->annonce->date           = date('Y-m-d');
-
-        $this->annonceur->save();
-        $this->annonceur->annonce()->save($this->annonce);
-
-        echo $twig->load('modif-confirm.html.twig')->render([
-            'breadcrumb' => $menu,
-            'chemin'     => $chemin,
-        ]);
+        $template = $twig->load("modif-confirm.html.twig");
+        echo $template->render(["breadcrumb" => $menu, "chemin" => $chemin]);
     }
 }

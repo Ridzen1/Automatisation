@@ -20,19 +20,11 @@ class AddItem
         $template = $twig->load('add.html.twig');
 
         echo $template->render([
-            'breadcrumb'   => $menu,
-            'chemin'       => $chemin,
-            'categories'   => $cat,
+            'breadcrumb' => $menu,
+            'chemin' => $chemin,
+            'categories' => $cat,
             'departements' => $dpt,
         ]);
-    }
-
-    private function isEmail(string $email): bool
-    {
-        return (bool) preg_match(
-            "/^[-_.[:alnum:]]+@((([[:alnum:]]|[[:alnum:]][[:alnum:]-]*[[:alnum:]])\.)+(...))$/i",
-            $email
-        );
     }
 
     public function addNewItem(
@@ -43,27 +35,26 @@ class AddItem
     ): void {
         date_default_timezone_set('Europe/Paris');
 
-        // Récupération sécurisée
-        $nom              = trim($allPostVars['nom'] ?? '');
-        $email            = trim($allPostVars['email'] ?? '');
-        $phone            = trim($allPostVars['phone'] ?? '');
-        $ville            = trim($allPostVars['ville'] ?? '');
-        $departement      = trim($allPostVars['departement'] ?? '');
-        $categorie        = trim($allPostVars['categorie'] ?? '');
-        $title            = trim($allPostVars['title'] ?? '');
-        $description      = trim($allPostVars['description'] ?? '');
-        $price            = trim($allPostVars['price'] ?? '');
-        $password         = trim($allPostVars['psw'] ?? '');
+        $nom = trim($allPostVars['nom'] ?? '');
+        $email = trim($allPostVars['email'] ?? '');
+        $phone = trim($allPostVars['phone'] ?? '');
+        $ville = trim($allPostVars['ville'] ?? '');
+        $departement = trim($allPostVars['departement'] ?? '');
+        $categorie = trim($allPostVars['categorie'] ?? '');
+        $title = trim($allPostVars['title'] ?? '');
+        $description = trim($allPostVars['description'] ?? '');
+        $price = trim($allPostVars['price'] ?? '');
+        $password = trim($allPostVars['psw'] ?? '');
         $password_confirm = trim($allPostVars['confirm-psw'] ?? '');
 
-        // Tableau d'erreurs
         $errors = [];
 
         if ($nom === '') {
             $errors[] = 'Veuillez entrer votre nom';
         }
 
-        if (!$this->isEmail($email)) {
+        // Remplacement de la Regex par la fonction native PHP
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $errors[] = 'Veuillez entrer une adresse mail correcte';
         }
 
@@ -99,35 +90,33 @@ class AddItem
             $errors[] = 'Les mots de passes ne sont pas identiques';
         }
 
-        // Gestion des erreurs
         if (!empty($errors)) {
             $template = $twig->load('add-error.html.twig');
 
             echo $template->render([
                 'breadcrumb' => $menu,
-                'chemin'     => $chemin,
-                'errors'     => $errors,
+                'chemin' => $chemin,
+                'errors' => $errors,
             ]);
 
             return;
         }
 
-        // Création des objets
-        $annonce   = new Annonce();
+        $annonce = new Annonce();
         $annonceur = new Annonceur();
 
-        $annonceur->email         = htmlentities($allPostVars['email']);
-        $annonceur->nom_annonceur = htmlentities($allPostVars['nom']);
-        $annonceur->telephone     = htmlentities($allPostVars['phone']);
+        $annonceur->email = htmlspecialchars($email);
+        $annonceur->nom_annonceur = htmlspecialchars($nom);
+        $annonceur->telephone = htmlspecialchars($phone);
 
-        $annonce->ville          = htmlentities($allPostVars['ville']);
-        $annonce->id_departement = $allPostVars['departement'];
-        $annonce->prix           = htmlentities($allPostVars['price']);
-        $annonce->mdp            = password_hash($allPostVars['psw'], PASSWORD_DEFAULT);
-        $annonce->titre          = htmlentities($allPostVars['title']);
-        $annonce->description    = htmlentities($allPostVars['description']);
-        $annonce->id_categorie   = $allPostVars['categorie'];
-        $annonce->date           = date('Y-m-d');
+        $annonce->ville = htmlspecialchars($ville);
+        $annonce->id_departement = $departement;
+        $annonce->prix = htmlspecialchars($price);
+        $annonce->mdp = password_hash($password, PASSWORD_DEFAULT);
+        $annonce->titre = htmlspecialchars($title);
+        $annonce->description = htmlspecialchars($description);
+        $annonce->id_categorie = $categorie;
+        $annonce->date = date('Y-m-d');
 
         $annonceur->save();
         $annonceur->annonce()->save($annonce);
@@ -136,7 +125,7 @@ class AddItem
 
         echo $template->render([
             'breadcrumb' => $menu,
-            'chemin'     => $chemin,
+            'chemin' => $chemin,
         ]);
     }
 }

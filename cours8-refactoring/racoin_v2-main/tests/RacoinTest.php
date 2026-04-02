@@ -23,13 +23,13 @@ class RacoinTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Charger l'application
         require_once __DIR__ . '/../vendor/autoload.php';
-        
+
         // Initialiser la connexion à la base de données
         \racoin\Db\connection::createConn();
-        
+
         // Créer l'application Slim
         $this->app = new App([
             'settings' => [
@@ -86,7 +86,7 @@ class RacoinTest extends TestCase
             'REQUEST_METHOD' => 'GET',
             'REQUEST_URI' => '/',
         ]);
-        
+
         $request = Request::createFromEnvironment($environment);
         $response = new Response();
 
@@ -96,17 +96,25 @@ class RacoinTest extends TestCase
         $body = ob_get_clean();
 
         // Vérifications
-        $this->assertEquals(200, $response->getStatusCode(), 
-            'La page d\'accueil devrait retourner un code 200');
-        
+        $this->assertEquals(
+            200,
+            $response->getStatusCode(),
+            "Erreur 500 : " . (string) $response->getBody()
+        );
+
         // Vérifier que la réponse contient du contenu
-        $this->assertNotEmpty($body, 
-            'La page d\'accueil devrait retourner du contenu');
-        
+        $this->assertNotEmpty(
+            $body,
+            'La page d\'accueil devrait retourner du contenu'
+        );
+
         // Vérifier que le contenu contient "Acceuil" (breadcrumb)
-        $this->assertStringContainsString('Acceuil', $body, 
-            'La page devrait contenir le breadcrumb "Acceuil"');
-        
+        $this->assertStringContainsString(
+            'Acceuil',
+            $body,
+            'La page devrait contenir le breadcrumb "Acceuil"'
+        );
+
         echo "\n✅ Test réussi : La page d'accueil retourne bien des données\n";
         echo "Taille du contenu : " . strlen($body) . " caractères\n";
     }
@@ -154,20 +162,34 @@ class RacoinTest extends TestCase
         $body = ob_get_clean();
 
         // Vérifications
-        $this->assertEquals(200, $response->getStatusCode(), 
-            'La page de l\'annonce devrait retourner un code 200');
-        
-        $this->assertNotEmpty($body, 
-            'La page de l\'annonce devrait retourner du contenu');
-        
-        $this->assertStringContainsString('Test Annonce Consultation', $body, 
-            'La page devrait contenir le titre de l\'annonce');
-        
-        $this->assertStringContainsString('Description de test pour consultation', $body, 
-            'La page devrait contenir la description de l\'annonce');
-        
-        $this->assertStringContainsString('100', $body, 
-            'La page devrait contenir le prix de l\'annonce');
+        $this->assertEquals(
+            200,
+            $response->getStatusCode(),
+            'La page de l\'annonce devrait retourner un code 200'
+        );
+
+        $this->assertNotEmpty(
+            $body,
+            'La page de l\'annonce devrait retourner du contenu'
+        );
+
+        $this->assertStringContainsString(
+            'Test Annonce Consultation',
+            $body,
+            'La page devrait contenir le titre de l\'annonce'
+        );
+
+        $this->assertStringContainsString(
+            'Description de test pour consultation',
+            $body,
+            'La page devrait contenir la description de l\'annonce'
+        );
+
+        $this->assertStringContainsString(
+            '100',
+            $body,
+            'La page devrait contenir le prix de l\'annonce'
+        );
 
         echo "\n✅ Test réussi : La consultation d'une annonce fonctionne\n";
         echo "Annonce consultée : ID {$annonceId}\n";
@@ -218,37 +240,47 @@ class RacoinTest extends TestCase
         ob_start();
         $response = $this->app->process($request, $response);
         $body = ob_get_clean();
-        
+
         // Nettoyer $_POST après le test
         $_POST = [];
 
         // Vérifications
-        $this->assertEquals(200, $response->getStatusCode(), 
-            'L\'ajout d\'annonce devrait retourner un code 200');
-        
-        $this->assertNotEmpty($body, 
-            'La page de confirmation devrait retourner du contenu');
-        
+        $this->assertEquals(
+            200,
+            $response->getStatusCode(),
+            'L\'ajout d\'annonce devrait retourner un code 200'
+        );
+
+        $this->assertNotEmpty(
+            $body,
+            'La page de confirmation devrait retourner du contenu'
+        );
+
         // Vérifier qu'il n'y a pas de message d'erreur
-        $this->assertStringNotContainsString('Veuillez entrer', $body, 
-            'La page ne devrait pas contenir de message d\'erreur de validation');
+        $this->assertStringNotContainsString(
+            'Veuillez entrer',
+            $body,
+            'La page ne devrait pas contenir de message d\'erreur de validation'
+        );
 
         // Vérifier que l'annonce a été créée en base
         $annonce = \racoin\model\Annonce::where('titre', 'Nouvelle Annonce Test')->first();
-        $this->assertNotNull($annonce, 
-            'L\'annonce devrait être créée en base de données');
-        
+        $this->assertNotNull(
+            $annonce,
+            'L\'annonce devrait être créée en base de données'
+        );
+
         if ($annonce) {
             $this->assertEquals('Nouvelle Annonce Test', $annonce->titre);
             $this->assertEquals(250, $annonce->prix);
             $this->assertEquals('Lyon', $annonce->ville);
-            
+
             echo "\n✅ Test réussi : L'ajout d'une annonce fonctionne\n";
             echo "Annonce créée : ID {$annonce->id_annonce}\n";
 
             // Récupérer l'annonceur pour le nettoyage
             $annonceur = \racoin\model\Annonceur::find($annonce->id_annonceur);
-            
+
             // Nettoyage
             $annonce->delete();
             if ($annonceur) {
